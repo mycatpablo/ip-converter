@@ -1,24 +1,37 @@
 # O QUE FALTA:
 # - Conversão de binário para decimal
 # - Botão para poder alternar dos dois modos (decimal/binário, binário/decimal)
-# - Não permitir mais do que 3 caracteres em cada entry
-# - Não permitir mais do que 255 em valor decimal
 # - Alterações na interface só para não ficar tão feio :(
 
 from tkinter import * # Importa a biblioteca Tkinter, que é preciso para criar a interface gráfica
 
 def calculation():
-
-    result1 = bin(int(entry1.get()))[2:].zfill(8)
-    result2 = bin(int(entry2.get()))[2:].zfill(8)
-    result3 = bin(int(entry3.get()))[2:].zfill(8)
-    result4 = bin(int(entry4.get()))[2:].zfill(8)
    
-    ip_binary = f"{result1}.{result2}.{result3}.{result4}"
+    val1 = int(entry1.get())
+    val2 = int(entry2.get())
+    val3 = int(entry3.get())
+    val4 = int(entry4.get())
+
+    if any(entry > 255 or entry < 0 for entry in [val1, val2, val3, val4]):
+        ip_binary = "Erro: Valor acima de 255"
+    else:
+        result1 = bin(int(entry1.get()))[2:].zfill(8)
+        result2 = bin(int(entry2.get()))[2:].zfill(8)
+        result3 = bin(int(entry3.get()))[2:].zfill(8)
+        result4 = bin(int(entry4.get()))[2:].zfill(8)
+        
+        ip_binary = f"{result1}.{result2}.{result3}.{result4}"
+
     result_label.config(text=ip_binary)
 
 def only_numbers(char):
     return char.isdigit()
+
+def max_numbers(num):
+    for entry in [entry1, entry2, entry3, entry4]:
+        value = entry.get()
+        if value and int(value) > 255:
+            entry.delete(3, END)
 
 window = Tk() # cria a raiz Tk
 
@@ -40,28 +53,36 @@ window.title("Conversor de IP") # título da janela
 
 vcmd = (window.register(only_numbers), '%S')
 
+
+initial_text = Label(window, font=('Arial', 20), bg='lightgray', width=10, justify='center')
+initial_text.grid(row=0, column=1)
+
 # Entradas de texto para efetuar a conversão
 
 entry1 = Entry(window, font=('Arial', 20), bg='lightgray', width=10, justify='center', validate='key', validatecommand=vcmd)
 entry1.grid(row=0, column=1)
+entry1.bind("<KeyRelease>", max_numbers)
 
 dot1 = Label(window, font=('Arial', 20), text='.')
 dot1.grid(row=0, column=2)
 
 entry2 = Entry(window, font=('Arial', 20), bg='lightgray', width=10, justify='center', validate='key', validatecommand=vcmd)
 entry2.grid(row=0, column=3)
+entry2.bind("<KeyRelease>", max_numbers)
 
 dot2 = Label(window, font=('Arial', 20), text='.')
 dot2.grid(row=0, column=4)
 
 entry3 = Entry(window, font=('Arial', 20), bg='lightgray', width=10, justify='center', validate='key', validatecommand=vcmd)
 entry3.grid(row=0, column=5)
+entry3.bind("<KeyRelease>", max_numbers)
 
 dot3 = Label(window, font=('Arial', 20), text='.')
 dot3.grid(row=0, column=6)
 
 entry4 = Entry(window, font=('Arial', 20), bg='lightgray', width=10, justify='center', validate='key', validatecommand=vcmd)
 entry4.grid(row=0, column=7)
+entry4.bind("<KeyRelease>", max_numbers)
 
 convertbtn = Button(window, text='Converter', font=('Arial', 20), width=10, command=calculation)
 convertbtn.grid(row=1, column=3, columnspan=3, pady=(10, 0))
