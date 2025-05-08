@@ -1,60 +1,61 @@
-# O QUE FALTA:
-# - Comentar código
-
 from tkinter import * # Importa a biblioteca Tkinter, que é preciso para criar a interface gráfica
 
-class Converter:
-    def __init__(self):
+class Converter: # Class Converter, que faz a conversão de decimal para binário e vice-versa
+    def __init__(self): # Inicializa a class Converter
         self.is_decimal = True
     
-    def conversion(self):
+    def conversion(self): # Função que faz a conversão
         self.is_decimal = not self.is_decimal
 
-converter = Converter()
+converter = Converter() # Instancia a classe
 
-def calculation():
+def calculation(): # Função que faz o cálculo
 
     try:
+        # Converte os valores em inteiros
         val1 = int(entry1.get())
         val2 = int(entry2.get())
         val3 = int(entry3.get())
         val4 = int(entry4.get())
 
+        # Se algum dos valores não cumprir os requisitos, o resultado será uma mensagem de erro
         if any((entry > 255 or entry < 0) if converter.is_decimal else (entry > 11111111 or entry < 0) for entry in [val1, val2, val3, val4]):
             ip_binary = "Erro: Valor acima de 255" if converter.is_decimal else "Erro: Valor acima de 11111111"
         else:
-            if converter.is_decimal:
-                result1 = bin(int(entry1.get()))[2:].zfill(8)
+            # Converte os valores para binário
+            if converter.is_decimal: # Se for decimal
+                result1 = bin(int(entry1.get()))[2:].zfill(8) # Preenche com zeros à esquerda, e tira os primeiros 2 bits
                 result2 = bin(int(entry2.get()))[2:].zfill(8)
                 result3 = bin(int(entry3.get()))[2:].zfill(8)
                 result4 = bin(int(entry4.get()))[2:].zfill(8)
                 ip_binary = f"{result1}.{result2}.{result3}.{result4}"
-            else:
+            else: # Se for binário
                 ip_binary = f"{int(entry1.get(), 2)}.{int(entry2.get(), 2)}.{int(entry3.get(), 2)}.{int(entry4.get(), 2)}"
 
+    # Se for um erro, o resultado é uma mensagem de erro
     except ValueError:
         ip_binary = "Erro: Não foi introduzido nenhum valor!"
 
     result_label.config(text=ip_binary)
 
-def only_numbers(char):
+def only_numbers(char): # Verifica se o caracter introduzido é um número
     return char.isdigit()
 
-def jump_cursor(event):
+def jump_cursor(event): # Move o cursor para o próximo entry
     next_entry = event.tk_focusNext()
     next_entry.focus_set()
 
-def max_numbers(value):
+def max_numbers(value): # Limita o tamanho dos entries
     for entry in [entry1, entry2, entry3, entry4]:
-        value = entry.get()
-        if converter.is_decimal:
+        value = entry.get() # Recebe o valor do entry
+        if converter.is_decimal: # Se o conversor estiver em decimal, limita o tamanho para 3 caracteres
             if value and len(value) > 2:
                 jump_cursor(entry)
-        else:
-            if value and len(value) > 7:
+        else: # Se o conversor estiver em binário, limita o tamanho para 8 caracteres
+            if value and len(value) > 7: 
                 jump_cursor(entry)
 
-def clear_button_click():
+def clear_button_click(): # Limpa os entries
     entry1.delete(0, END)
     entry2.delete(0, END)
     entry3.delete(0, END)
@@ -62,14 +63,14 @@ def clear_button_click():
     result_label.config(text='')
     entry1.focus_set()
 
-def copy_result():
+def copy_result(): # Copia o resultado para o teclado
     result_text = result_label.cget("text")
     window.clipboard_clear()
     window.clipboard_append(result_text)
     copybtn.config(text='Copiado!')
     window.after(1000, lambda: copybtn.config(text='Copiar para o teclado'))
 
-def toggle_button_click():
+def toggle_button_click(): # Troca o modo de conversão
     entry1.delete(0, END)
     entry2.delete(0, END)
     entry3.delete(0, END)
@@ -81,6 +82,8 @@ def toggle_button_click():
         togglebtn.config(text='Trocar para binário')
     else:
         togglebtn.config(text='Trocar para decimal')
+
+# Interface gráfica
 
 window = Tk() # cria a raiz Tk
 
@@ -100,14 +103,15 @@ window.geometry('%dx%d+%d+%d' % (w, h, x, y))
 
 window.title("Conversor de IP") # título da janela
 
-window.resizable(False, False)
+window.resizable(False, False) # Impede que a janela seja redimensionada
 
+# Binds
 window.bind("<Escape>", lambda event: clear_button_click())
 window.bind("<Return>", lambda event: calculation())
 window.bind("<c>", lambda event: copy_result())
 window.bind("<t>", lambda event: toggle_button_click())
 
-vcmd = (window.register(only_numbers), '%S')
+vcmd = (window.register(only_numbers), '%S') # Registra a função que verifica se o caracter introduzido é um número
 
 initial_text = Label(window, font=('Arial', 20), bg='lightgray', width=10, justify='center')
 initial_text.grid(row=0, column=1)
