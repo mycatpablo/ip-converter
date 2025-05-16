@@ -111,7 +111,7 @@ window.bind("<Return>", lambda event: calculation())
 window.bind("<c>", lambda event: copy_result())
 window.bind("<t>", lambda event: toggle_button_click())
 
-vcmd = (window.register(only_numbers), '%S') # Registra a função que verifica se o caracter introduzido é um número
+vcmd = (window.register(only_numbers), '%S') # Regista a função que verifica se o caracter introduzido é um número
 
 initial_text = Label(window, font=('Arial', 20), bg='lightgray', width=10, justify='center')
 initial_text.grid(row=0, column=1)
